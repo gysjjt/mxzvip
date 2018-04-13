@@ -155,8 +155,7 @@ class curlapi{
 		$rsBlank = preg_replace("/\s\n\t/","",$rs);
 		$rsBlank = str_replace('&nbsp;','',$rsBlank);
 		//$rsBlank = str_replace(' ', '', $rsBlank);
-		preg_match_all("/datalist.*>(.*)<\/table>/isU", $rsBlank ,$tables);
-
+		preg_match_all("/dataBody.*>(.*)<\/script/isU", $rsBlank ,$tables);
 		if(isset($tables[1][0])) {
 			return preg_replace("/<tr class=\"category\">.*<\/tr>/isU", '', $tables[1][0]);
 			/*if($page>1) {
@@ -177,13 +176,26 @@ class curlapi{
      */
 	public function downMembersCvs($html,$shopname){
 		$rules = array(
-			//采集tr中的纯文本内容
-			'other' => array('tr','html'),
+			//采集class的date-id属性中的纯文本内容,class的list-unstyletext
+			//'member' => array('.media-member','html'),
+			'memberid' => array('.media-member','data-id'),
+			'memberdata' => array('.list-unstyle','text'),
 		);
 		$newdata = array();
 		$data = QueryList::Query($html, $rules)->data;
-
 		foreach ($data as $k => &$item) {
+			$memberdata = $item['memberdata'];
+			$memberdata = explode('                    ', $memberdata);
+echo "<pre>";
+print_r($memberdata);
+echo "</pre>";
+exit;
+
+			echo "<pre>";
+print_r($item);
+echo "</pre>";
+exit;
+
 			$other = explode('</td>', $item['other']);
 
 			if(count($other) > 12) {

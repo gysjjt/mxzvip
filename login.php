@@ -39,23 +39,18 @@ if($_GET['action'] == "code"){//获取验证码
 
     //总页数
     $pages = ceil($totals/20);
+    $pages = 1;
 	for($i=1; $i<=$pages; $i++){
 		$params = "currNum=$i&rpp=20";
 		$curl -> params = $params;
 		$curl -> url = "http://vip.netxz.cn/member/index";
 		$pagesData = $curl -> getMembersPage();
-echo "<pre>";
-print_r($pagesData);
-echo "</pre>";
-exit;
-
 		$data .= $curl ->getMembersInfo($pagesData, $i);
 	};
 
     if($data == '') {
         header('Location: index.php');
     }
-
 	$curl -> downMembersCvs($data, $shopname);
 }else if($_GET['action'] == 'curlpackage'){
     $shopname = $_REQUEST['shopname'];
