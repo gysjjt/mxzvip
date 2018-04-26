@@ -174,81 +174,156 @@ class curlapi{
      * @param $html
      * @param $shopname
      */
-	public function downMembersCvs($html,$shopname){
+	public function getDownMembers($html){
 		$rules = array(
 			//采集class的date-id属性中的纯文本内容,class的list-unstyletext
 			//'member' => array('.media-member','html'),
 			'memberid' => array('.media-member','data-id'),
-			'memberdata' => array('.list-unstyle','text'),
+			'memberdata' => array('.media-head','text'),
+			'memberdata2' => array('.media-body','text'),
 		);
 		$newdata = array();
 		$data = QueryList::Query($html, $rules)->data;
 		foreach ($data as $k => &$item) {
 			$memberdata = $item['memberdata'];
-			$memberdata = explode('                    ', $memberdata);
-echo "<pre>";
-print_r($memberdata);
-echo "</pre>";
-exit;
-
-			echo "<pre>";
-print_r($item);
-echo "</pre>";
-exit;
-
-			$other = explode('</td>', $item['other']);
-
-			if(count($other) > 12) {
-
-				//unset($other[0]);//去掉第一空白项
-                //unset($other[14]);//去掉14项
-                //unset($other[15]);//去掉15项
-                //unset($other[18]);//去掉15项
-				$item['other'] = $other;
+			$memberdata = explode('                ', $memberdata);
+			$memberdata2 = $item['memberdata2'];
+			$memberdata2 = explode('               ', $memberdata2);
 
 
-				//会员详情地址
-				$k11 = 11;
-				preg_match_all('/<a href=\"(.*)\">修改<\/a>/isU', $other[$k11], $detail);
-				$other[$k11] = isset($detail[1][0])?$detail[1][0]:0;
-
-				foreach ($other as &$v1) {
-					$v1 = strip_tags($v1);;
-					$v1 = preg_replace("/\s\n\t/","",$v1);
-					$v1 = str_replace(' ', '', $v1);
-					$v1 = trim(str_replace(PHP_EOL, '', $v1));
-					$v1 = str_replace('&nbsp;','',$v1);
-				}
-
-				//卡号
-				$newdata[$k][0] = "\t".$other[1]; //卡号
-				$newdata[$k][1] = $other[2]; //姓名
-				$newdata[$k][2] = $other[0]; //手机号
-				$newdata[$k][3] = ''; //性别
-
-				//卡类型
-				$newdata[$k][4] = $other[5]; //卡类型
-
-				$newdata[$k][5] = $other[3]; //折扣
-
-				//卡金余额信息,
-				$newdata[$k][6] = $other[6]; //卡金余额
-				$newdata[$k][12] = $other[8]; //欠款
-				$newdata[$k][7] = 0; //充值总额
-				$newdata[$k][9] = 0; //消费总额
-				$newdata[$k][10] = 0; //赠送金
-				$newdata[$k][8] = $other[7]; //消费次数
-				$newdata[$k][11] = $other[9]; //积分
-				$newdata[$k][13] = ''; //开卡时间
-
-				$newdata[$k][14] = $other[10]; //最后消费时间
-				$newdata[$k][15] = ''; //生日
-				$newdata[$k][16] = ''; //会员备注
-
-				$newdata[$k][17] = $other[11]; //会员详情地址
-				ksort($newdata[$k]);
+			foreach ($memberdata as &$v1) {
+				$v1 = strip_tags($v1);;
+				$v1 = preg_replace("/\s\n\t/","",$v1);
+				$v1 = str_replace(' ', '', $v1);
+				$v1 = trim(str_replace(PHP_EOL, '', $v1));
+				$v1 = str_replace('&nbsp;','',$v1);
 			}
+			foreach ($memberdata2 as &$v2) {
+				$v2 = strip_tags($v2);;
+				$v2 = preg_replace("/\s\n\t/","",$v2);
+				$v2 = str_replace(' ', '', $v2);
+				$v2 = trim(str_replace(PHP_EOL, '', $v2));
+				$v2 = str_replace('&nbsp;','',$v2);
+			}
+
+
+			$memberdata[8] = str_replace('当前积分：', '', $memberdata[8]);
+			$memberdata[10] = str_replace('最后消费：', '', $memberdata[10]);
+			$memberdata[14] = str_replace('充值总额￥', '', $memberdata[14]);
+			$memberdata[16] = str_replace('消费总额￥', '', $memberdata[16]);
+			$memberdata[18] = str_replace(array('消费','次'), array('',''), $memberdata[18]);
+
+			$memberdata2[1] = str_replace(array('[',']','1'), array('','',''), $memberdata2[1]);
+			$memberdata2[5] = str_replace('卡金￥', '', $memberdata2[5]);
+			$memberdata2[7] = str_replace('赠金￥', '', $memberdata2[7]);
+
+
+			$newdata[$k][0] = "\t".$memberdata2[1]; //卡号
+			$newdata[$k][1] = $memberdata[0]; //姓名
+			$newdata[$k][2] = $memberdata[2]; //手机号
+			$newdata[$k][3] = ''; //性别
+
+			//卡类型
+			$newdata[$k][4] = $memberdata2[2]; //卡类型
+
+			$newdata[$k][5] = 8; //折扣
+
+			//卡金余额信息,
+			$newdata[$k][6] = $memberdata2[5]; //卡金余额
+			$newdata[$k][12] = 0; //欠款
+			$newdata[$k][7] = $memberdata[14]; //充值总额
+			$newdata[$k][9] = $memberdata[16]; //消费总额
+			$newdata[$k][10] = $memberdata2[7]; //赠送金
+			$newdata[$k][8] = $memberdata[18]; //消费次数
+			$newdata[$k][11] = $memberdata[8]; //积分
+			$newdata[$k][13] = ''; //开卡时间
+
+			$newdata[$k][14] = $memberdata[10]; //最后消费时间
+			$newdata[$k][15] = ''; //生日
+			$newdata[$k][16] = ''; //会员备注
+
+			$newdata[$k][17] = ''; //会员详情地址
+			ksort($newdata[$k]);
 		}
+		return $newdata;
+	}
+
+    /**
+     * 获取会员信息下载到CVS
+     * @param $html
+     * @param $shopname
+     */
+	public function downMembersCvs($newdata,$shopname){
+		// $rules = array(
+		// 	//采集class的date-id属性中的纯文本内容,class的list-unstyletext
+		// 	//'member' => array('.media-member','html'),
+		// 	'memberid' => array('.media-member','data-id'),
+		// 	'memberdata' => array('.media-head','text'),
+		// 	'memberdata2' => array('.media-body','text'),
+		// );
+		// $newdata = array();
+		// $data = QueryList::Query($html, $rules)->data;
+		// foreach ($data as $k => &$item) {
+		// 	$memberdata = $item['memberdata'];
+		// 	$memberdata = explode('                ', $memberdata);
+		// 	$memberdata2 = $item['memberdata2'];
+		// 	$memberdata2 = explode('               ', $memberdata2);
+
+
+		// 	foreach ($memberdata as &$v1) {
+		// 		$v1 = strip_tags($v1);;
+		// 		$v1 = preg_replace("/\s\n\t/","",$v1);
+		// 		$v1 = str_replace(' ', '', $v1);
+		// 		$v1 = trim(str_replace(PHP_EOL, '', $v1));
+		// 		$v1 = str_replace('&nbsp;','',$v1);
+		// 	}
+		// 	foreach ($memberdata2 as &$v2) {
+		// 		$v2 = strip_tags($v2);;
+		// 		$v2 = preg_replace("/\s\n\t/","",$v2);
+		// 		$v2 = str_replace(' ', '', $v2);
+		// 		$v2 = trim(str_replace(PHP_EOL, '', $v2));
+		// 		$v2 = str_replace('&nbsp;','',$v2);
+		// 	}
+
+
+		// 	$memberdata[8] = str_replace('当前积分：', '', $memberdata[8]);
+		// 	$memberdata[10] = str_replace('最后消费：', '', $memberdata[10]);
+		// 	$memberdata[14] = str_replace('充值总额￥', '', $memberdata[14]);
+		// 	$memberdata[16] = str_replace('消费总额￥', '', $memberdata[16]);
+		// 	$memberdata[18] = str_replace(array('消费','次'), array('',''), $memberdata[18]);
+
+		// 	$memberdata2[1] = str_replace(array('[',']','1'), array('','',''), $memberdata2[1]);
+		// 	$memberdata2[5] = str_replace('卡金￥', '', $memberdata2[5]);
+		// 	$memberdata2[7] = str_replace('赠金￥', '', $memberdata2[7]);
+
+
+		// 	$newdata[$k][0] = "\t".$memberdata2[1]; //卡号
+		// 	$newdata[$k][1] = $memberdata[0]; //姓名
+		// 	$newdata[$k][2] = $memberdata[2]; //手机号
+		// 	$newdata[$k][3] = ''; //性别
+
+		// 	//卡类型
+		// 	$newdata[$k][4] = $memberdata2[2]; //卡类型
+
+		// 	$newdata[$k][5] = 8; //折扣
+
+		// 	//卡金余额信息,
+		// 	$newdata[$k][6] = $memberdata2[5]; //卡金余额
+		// 	$newdata[$k][12] = 0; //欠款
+		// 	$newdata[$k][7] = $memberdata[14]; //充值总额
+		// 	$newdata[$k][9] = $memberdata[16]; //消费总额
+		// 	$newdata[$k][10] = $memberdata2[7]; //赠送金
+		// 	$newdata[$k][8] = $memberdata[18]; //消费次数
+		// 	$newdata[$k][11] = $memberdata[8]; //积分
+		// 	$newdata[$k][13] = ''; //开卡时间
+
+		// 	$newdata[$k][14] = $memberdata[10]; //最后消费时间
+		// 	$newdata[$k][15] = ''; //生日
+		// 	$newdata[$k][16] = ''; //会员备注
+
+		// 	$newdata[$k][17] = ''; //会员详情地址
+		// 	ksort($newdata[$k]);
+		// }
 
 		//导出CVS
 		$cvsstr = "卡号(必填[唯一]),姓名(必填),手机号(必填[唯一]),性别(必填[“0”代表男，“1”代表女]),卡类型(必填[系统编号]),折扣(必填),卡金余额(必填),充值总额,消费次数,消费总额,赠送金,积分,欠款,开卡时间(格式：YYYY-mm-dd),最后消费时间(格式：YYYY-mm-dd),生日(格式：YYYY-mm-dd),会员备注\n";
@@ -256,60 +331,6 @@ exit;
 		$cvsstr = iconv('utf-8','gb2312//ignore',$cvsstr);
 
 		foreach($newdata as &$v){
-			//获取会员备注和欠款
-			$par = trim($v[17]);
-			$this -> url = "http://vip.mikong.com/iframepage/apppage/$par";
-			$rs = $this -> curl();
-
-			//性别
-			$sex = '';
-			$rules = array(
-				'1' => array('#rblSex #rblSex_0','checked'),
-				'2' => array('#rblSex #rblSex_1','checked'),
-				'3' => array('#rblSex #rblSex_2','checked'),
-			);
-			$rblSex = QueryList::Query($rs, $rules)->data;
-			foreach ($rblSex[0] as $k=>$rv){
-				if($rv == 'checked'){
-					$sex = $k;
-				}
-			}
-
-			if($sex == 1){
-				$v[3] = '女';
-			} else if($sex == 2){
-				$v[3] = '男';
-			}
-
-			//赠送金
-			$rules = array(
-				'txbZSMoney' => array('#txbZSMoney','value'),
-			);
-			$txbZSMoney = QueryList::Query($rs, $rules)->data;
-			$v[10] = $txbZSMoney[0]['txbZSMoney'];
-
-			//开卡时间
-			$rules = array(
-				'txbKKDate' => array('#txbKKDate','value'),
-			);
-			$txbKKDate = QueryList::Query($rs, $rules)->data;
-			$v[13] = $txbKKDate[0]['txbKKDate'];
-
-			//生日
-			$rules = array(
-				'txbBirthday' => array('#txbBirthday','value'),
-			);
-			$txbBirthday = QueryList::Query($rs, $rules)->data;
-			$v[15] = isset($txbBirthday[0]['txbBirthday'])?$txbBirthday[0]['txbBirthday']:'';
-
-			//会员备注
-			$rules = array(
-				'txbRemark' => array('#txbRemark','value'),
-			);
-			$txbRemark = QueryList::Query($rs, $rules)->data;
-			$v[16] = $txbRemark[0]['txbRemark'];
-			
-			unset($v[17]);
 			foreach($v as $k=>&$v1){
 				//转码
 				$cvsdata = iconv('utf-8','gb2312//ignore',$v1);
@@ -320,6 +341,7 @@ exit;
 			}
 			$cvsstr .= "\n";
 		}
+
 		header("Content-type:text/csv");
 		header("Content-Disposition:attachment;filename=".$filename);
 		header('Cache-Control:must-revalidate,post-check=0,pre-check=0');

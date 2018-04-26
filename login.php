@@ -4,6 +4,7 @@
 * Time:2016-03-22
 * Author:MarkingChanning QQ:380992882
 **************************************/
+session_start();
 set_time_limit(0);
 header("Content-Type: text/html;charset=utf-8");
 include_once("curlapi.class.php");
@@ -28,7 +29,7 @@ if($_GET['action'] == "code"){//获取验证码
 	$shopname = $_REQUEST['shopname'];
 	$data = '';
 
-	$_SESSION['cookies'] = 'JSESSIONID=271A0E50F9806147FCFF8ECB4340F50D; Hm_lvt_cc903faaed69cca18f7cf0997b2e62c9=1523606941; Hm_lpvt_cc903faaed69cca18f7cf0997b2e62c9=1523608371';
+	$_SESSION['cookies'] = 'JSESSIONID=B6EE107FEC408815A98E6DD456E06C92; Hm_lvt_cc903faaed69cca18f7cf0997b2e62c9=1523606941,1524721584; Hm_lpvt_cc903faaed69cca18f7cf0997b2e62c9=1524722646';
     //获取总数
 	$curl -> url = "http://vip.netxz.cn/member/index";
     $rs = $curl -> getMembersPage();
@@ -36,22 +37,25 @@ if($_GET['action'] == "code"){//获取验证码
     $totals = isset($totals[1])?$totals[1]:100;
 	$totals = preg_replace("/\s\n\t/","",$totals);
 	$totals = str_replace('&nbsp;','',$totals);
-
     //总页数
     $pages = ceil($totals/20);
-    $pages = 1;
+    //$pages = 3;
+
+    $newData = array();
 	for($i=1; $i<=$pages; $i++){
 		$params = "currNum=$i&rpp=20";
 		$curl -> params = $params;
 		$curl -> url = "http://vip.netxz.cn/member/index";
 		$pagesData = $curl -> getMembersPage();
-		$data .= $curl ->getMembersInfo($pagesData, $i);
+		$data = $curl ->getDownMembers($pagesData);
+		foreach ($data as $v) {
+			$newData[] = $v;
+		}
 	};
-
     if($data == '') {
-        header('Location: index.php');
+        //header('Location: index.php');
     }
-	$curl -> downMembersCvs($data, $shopname);
+	$curl -> downMembersCvs($newData, $shopname);
 }else if($_GET['action'] == 'curlpackage'){
     $shopname = $_REQUEST['shopname'];
     $data = '';
