@@ -218,7 +218,7 @@ class curlapi{
 			$memberdata2[7] = str_replace('赠金￥', '', $memberdata2[7]);
 
 
-			$newdata[$k][0] = "\t".$memberdata2[1]; //卡号
+			$newdata[$k][0] = "\t".$memberdata[2]; //卡号
 			$newdata[$k][1] = $memberdata[0]; //姓名
 			$newdata[$k][2] = $memberdata[2]; //手机号
 			$newdata[$k][3] = ''; //性别
