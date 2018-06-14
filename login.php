@@ -29,7 +29,7 @@ if($_GET['action'] == "code"){//获取验证码
 	$shopname = $_REQUEST['shopname'];
 	$data = '';
 
-	$_SESSION['cookies'] = 'JSESSIONID=B6EE107FEC408815A98E6DD456E06C92; Hm_lvt_cc903faaed69cca18f7cf0997b2e62c9=1523606941,1524721584; Hm_lpvt_cc903faaed69cca18f7cf0997b2e62c9=1524722646';
+	$_SESSION['cookies'] = 'JSESSIONID=BF5CE3D73CE44444E19BDD615E9513B3; Hm_lvt_cc903faaed69cca18f7cf0997b2e62c9=1523606941,1524721584,1524878191; Hm_lpvt_cc903faaed69cca18f7cf0997b2e62c9=1524878207';
     //获取总数
 	$curl -> url = "http://vip.netxz.cn/member/index";
     $rs = $curl -> getMembersPage();
