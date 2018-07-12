@@ -190,7 +190,6 @@ class curlapi{
             $memberdata2 = $item['memberdata2'];
             $memberdata2 = explode('               ', $memberdata2);
 
-
             foreach ($memberdata as &$v1) {
                 $v1 = strip_tags($v1);;
                 $v1 = preg_replace("/\s\n\t/","",$v1);
@@ -204,8 +203,8 @@ class curlapi{
                 $v2 = str_replace(' ', '', $v2);
                 $v2 = trim(str_replace(PHP_EOL, '', $v2));
                 $v2 = str_replace('&nbsp;','',$v2);
+                $v2 = str_replace(array('[',']'),array('',''),$v2);
             }
-
 
             $memberdata[8] = str_replace('当前积分：', '', $memberdata[8]);
             $memberdata[10] = str_replace('最后消费：', '', $memberdata[10]);
@@ -213,12 +212,12 @@ class curlapi{
             $memberdata[16] = str_replace('消费总额￥', '', $memberdata[16]);
             $memberdata[18] = str_replace(array('消费','次'), array('',''), $memberdata[18]);
 
-            $memberdata2[1] = str_replace(array('[',']','1'), array('','',''), $memberdata2[1]);
+            //$memberdata2[1] = str_replace(array('[',']','1'), array('','',''), $memberdata2[1]);
             $memberdata2[5] = str_replace('卡金￥', '', $memberdata2[5]);
             $memberdata2[7] = str_replace('赠金￥', '', $memberdata2[7]);
 
 
-            $newdata[$k][0] = "\t".$memberdata[2]; //卡号
+            $newdata[$k][0] = "\t".$memberdata2[1]; //卡号
             $newdata[$k][1] = $memberdata[0]; //姓名
             $newdata[$k][2] = $memberdata[2]; //手机号
             $newdata[$k][3] = ''; //性别

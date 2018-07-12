@@ -29,7 +29,7 @@ if($_GET['action'] == "code"){//获取验证码
     $shopname = "发宴美发美甲";
     $data = '';
 
-    $_SESSION['cookies'] = 'JSESSIONID=3CF7C937D90443FC02B803D0586F33B4; Hm_lvt_4e5bdf78b2b9fcb88736fc67709f2806=1529394734; Hm_lpvt_4e5bdf78b2b9fcb88736fc67709f2806=1529394948';
+    $_SESSION['cookies'] = 'JSESSIONID=86FB8AB238560644DB5984ACF58B66AF; Hm_lvt_4e5bdf78b2b9fcb88736fc67709f2806=1529394734,1529464385; Hm_lpvt_4e5bdf78b2b9fcb88736fc67709f2806=1529464407';
     //获取总数
     $curl -> url = "http://mry.meiruyi.vip/member/index";
     $rs = $curl -> getMembersPage();
