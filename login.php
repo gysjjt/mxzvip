@@ -26,10 +26,10 @@ if($_GET['action'] == "code"){//获取验证码
         echo "账号密码或者验证码错误";
     }
 }else if($_GET['action'] == 'curlmember'){
-    $shopname = "发宴美发美甲";
+    $shopname = "妍理碧桂花城店";
     $data = '';
 
-    $_SESSION['cookies'] = 'JSESSIONID=86FB8AB238560644DB5984ACF58B66AF; Hm_lvt_4e5bdf78b2b9fcb88736fc67709f2806=1529394734,1529464385; Hm_lpvt_4e5bdf78b2b9fcb88736fc67709f2806=1529464407';
+    $_SESSION['cookies'] = 'JSESSIONID=6622725742C32EBFD4366507E2910D95; Hm_lvt_4e5bdf78b2b9fcb88736fc67709f2806=1529394734,1529464385,1531386540; Hm_lpvt_4e5bdf78b2b9fcb88736fc67709f2806=1531386582';
     //获取总数
     $curl -> url = "http://mry.meiruyi.vip/member/index";
     $rs = $curl -> getMembersPage();
@@ -45,6 +45,7 @@ if($_GET['action'] == "code"){//获取验证码
     $newData = array();
     for($i=1; $i<=$pages; $i++){
         $params = "currNum=$i&rpp=20";
+        //$params .= "&keyword=13923124706";
         $curl -> params = $params;
         $curl -> url = "http://mry.meiruyi.vip/member/index";
         $pagesData = $curl -> getMembersPage();
@@ -58,28 +59,40 @@ if($_GET['action'] == "code"){//获取验证码
     }
     $curl -> downMembersCvs($newData, $shopname);
 }else if($_GET['action'] == 'curlpackage'){
-    $shopname = $_REQUEST['shopname'];
+    $shopname = "妍理碧桂花城店";
     $data = '';
 
+    $_SESSION['cookies'] = 'JSESSIONID=6622725742C32EBFD4366507E2910D95; Hm_lvt_4e5bdf78b2b9fcb88736fc67709f2806=1529394734,1529464385,1531386540; Hm_lpvt_4e5bdf78b2b9fcb88736fc67709f2806=1531386582';
     //获取总数
-    $curl -> url = "http://vip8.sentree.com.cn/shair/timesItem!initTreat.action?set=cash";
-    $rs = $curl -> curl();
+    $curl -> url = "http://mry.meiruyi.vip/member/index";
+    $rs = $curl -> getMembersPage();
     preg_match('/共(.*)条/isU', $rs, $totals);
     $totals = isset($totals[1])?$totals[1]:100;
+    $totals = preg_replace("/\s\n\t/","",$totals);
+    $totals = str_replace('&nbsp;','',$totals);
 
     //总页数
-    $pages = ceil($totals/100);
+    $pages = ceil($totals/20);
+    //$pages = 3;
+
+    $newData = array();
     for($i=1; $i<=$pages; $i++){
-        $params = "page.currNum=$i&page.rpp=100&set=cash&r=0.3421386775783387";
+        $params = "currNum=$i&rpp=20";
+        //$params .= "&keyword=13923124706";
         $curl -> params = $params;
-        $curl -> url = "http://vip8.sentree.com.cn/shair/timesItem!initTreat.action";
-        $pagesData = $curl -> getPackagePage();
-        $data .= $curl ->getPackageInfo($pagesData, $i);
+        $curl -> url = "http://mry.meiruyi.vip/member/index";
+        $pagesData = $curl -> getMembersPage();
+        $data = $curl ->getPackageInfo($pagesData);
+        foreach ($data as $v) {
+            $newData[] = $v;
+        }
     };
     if($data == '') {
-        header('Location: index.php');
+        //header('Location: index.php');
     }
-    $curl -> downPackageCvs($data, $shopname);
+
+    //getPackageInfo
+    $curl -> downPackageCvs($newData, $shopname);
 }else if($_GET['action'] == 'curlstaff'){
     $shopname = $_REQUEST['shopname'];
     $data = '';

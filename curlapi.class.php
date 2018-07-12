@@ -176,68 +176,66 @@ class curlapi{
      */
     public function getDownMembers($html){
         $rules = array(
-            //采集class的date-id属性中的纯文本内容,class的list-unstyletext
-            //'member' => array('.media-member','html'),
-            'memberid' => array('.media-member','data-id'),
-            'memberdata' => array('.media-head','text'),
-            'memberdata2' => array('.media-body','text'),
+            'memberdata' => array('.media-member','html','-.card_list'),
         );
+
         $newdata = array();
         $data = QueryList::Query($html, $rules)->data;
         foreach ($data as $k => &$item) {
             $memberdata = $item['memberdata'];
-            $memberdata = explode('                ', $memberdata);
-            $memberdata2 = $item['memberdata2'];
-            $memberdata2 = explode('               ', $memberdata2);
-
-            foreach ($memberdata as &$v1) {
-                $v1 = strip_tags($v1);;
-                $v1 = preg_replace("/\s\n\t/","",$v1);
-                $v1 = str_replace(' ', '', $v1);
-                $v1 = trim(str_replace(PHP_EOL, '', $v1));
-                $v1 = str_replace('&nbsp;','',$v1);
-            }
-            foreach ($memberdata2 as &$v2) {
-                $v2 = strip_tags($v2);;
-                $v2 = preg_replace("/\s\n\t/","",$v2);
-                $v2 = str_replace(' ', '', $v2);
-                $v2 = trim(str_replace(PHP_EOL, '', $v2));
-                $v2 = str_replace('&nbsp;','',$v2);
-                $v2 = str_replace(array('[',']'),array('',''),$v2);
+            $memberdata = explode('td>', $memberdata);
+            foreach ($memberdata as &$v3) {
+                $v3 = strip_tags($v3);
+                $v3 = preg_replace("/\s\n\t/","",$v3);
+                $v3 = str_replace(' ', '', $v3);
+                $v3 = trim(str_replace(PHP_EOL, '', $v3));
+                $v3 = str_replace('&nbsp;','',$v3);
             }
 
-            $memberdata[8] = str_replace('当前积分：', '', $memberdata[8]);
-            $memberdata[10] = str_replace('最后消费：', '', $memberdata[10]);
-            $memberdata[14] = str_replace('充值总额￥', '', $memberdata[14]);
-            $memberdata[16] = str_replace('消费总额￥', '', $memberdata[16]);
-            $memberdata[18] = str_replace(array('消费','次'), array('',''), $memberdata[18]);
 
-            //$memberdata2[1] = str_replace(array('[',']','1'), array('','',''), $memberdata2[1]);
-            $memberdata2[5] = str_replace('卡金￥', '', $memberdata2[5]);
-            $memberdata2[7] = str_replace('赠金￥', '', $memberdata2[7]);
+            // $memberdata[8] = str_replace('当前积分：', '', $memberdata[8]);
+            // $memberdata[10] = str_replace('最后消费：', '', $memberdata[23]);
+            // $memberdata[14] = str_replace('充值总额￥', '', $memberdata[19]);
+            // $memberdata[16] = str_replace('消费总额￥', '', $memberdata[21]);
+            // $memberdata[18] = str_replace(array('消费','次'), array('',''), $memberdata[10]);
+
+            // //$memberdata2[1] = str_replace(array('[',']','1'), array('','',''), $memberdata2[1]);
+            // $memberdata[5] = str_replace('卡金￥', '', $memberdata[13]);
+            // $memberdata[7] = str_replace('赠金￥', '', $memberdata[14]);
 
 
-            $newdata[$k][0] = "\t".$memberdata2[1]; //卡号
-            $newdata[$k][1] = $memberdata[0]; //姓名
-            $newdata[$k][2] = $memberdata[2]; //手机号
+            $card = $memberdata[11]; //卡号
+            $card = explode(')', $card);
+            foreach ($card as &$v4) {
+                $v4 = strip_tags($v4);
+                $v4 = preg_replace("/\s\n\t/","",$v4);
+                $v4 = str_replace(' ', '', $v4);
+                $v4 = trim(str_replace(PHP_EOL, '', $v4));
+                $v4 = str_replace('&nbsp;','',$v4);
+                $v4 = str_replace('(','',$v4);
+            }
+
+            $newdata[$k][0] = "\t".$card[0]; //卡号
+            $newdata[$k][1] = $memberdata[2]; //姓名
+            $newdata[$k][2] = $memberdata[4]; //手机号
             $newdata[$k][3] = ''; //性别
 
             //卡类型
-            $newdata[$k][4] = $memberdata2[2]; //卡类型
+            $newdata[$k][4] = $card[1]; //卡类型
 
-            $newdata[$k][5] = 8; //折扣
+            $newdata[$k][5] = str_replace('折', '', $memberdata[12]); //折扣
 
             //卡金余额信息,
-            $newdata[$k][6] = $memberdata2[5]; //卡金余额
+            $newdata[$k][6] = $memberdata[13]; //卡金余额
             $newdata[$k][12] = 0; //欠款
-            $newdata[$k][7] = $memberdata[14]; //充值总额
-            $newdata[$k][9] = $memberdata[16]; //消费总额
-            $newdata[$k][10] = $memberdata2[7]; //赠送金
-            $newdata[$k][8] = $memberdata[18]; //消费次数
+            $newdata[$k][7] = $memberdata[19]; //充值总额
+            $newdata[$k][9] = $memberdata[21]; //消费总额
+            $newdata[$k][10] = $memberdata[14]; //赠送金
+            $newdata[$k][8] = $memberdata[10]; //消费次数
             $newdata[$k][11] = $memberdata[8]; //积分
             $newdata[$k][13] = ''; //开卡时间
 
-            $newdata[$k][14] = $memberdata[10]; //最后消费时间
+            $newdata[$k][14] = $memberdata[23]; //最后消费时间
             $newdata[$k][15] = ''; //生日
             $newdata[$k][16] = ''; //会员备注
 
@@ -372,20 +370,80 @@ class curlapi{
     /**
      *获取套餐页面数据
      */
-    public function getPackageInfo($rs, $page){
-        $rsBlank = preg_replace("/\s\n\t/","",$rs);
-        //$rsBlank = str_replace(' ', '', $rsBlank);
-        preg_match_all("/table-responsive.*>(.*)<\/form>/isU", $rsBlank ,$tables);
-        if(isset($tables[1][0])) {
-            if($page>1) {
-                return preg_replace("/<thead[^>]*>.*<\/thead>/isU", '', $tables[1][0]);
-            } else {
-                return $tables[1][0];
+    public function getPackageInfo($html){
+        $rules = array(
+            'memberdata' => array('.media-member','html','-.card_list'),
+            'card_list' => array('.card_list>table','html'),
+        );
+
+        $newdata = array();
+        $data = QueryList::Query($html, $rules)->data;
+        foreach ($data as $k => &$item) {
+            //会员信息
+            $memberdata = $item['memberdata'];
+            $memberdata = explode('td>', $memberdata);
+            foreach ($memberdata as &$v3) {
+                $v3 = strip_tags($v3);
+                $v3 = preg_replace("/\s\n\t/","",$v3);
+                $v3 = str_replace(' ', '', $v3);
+                $v3 = trim(str_replace(PHP_EOL, '', $v3));
+                $v3 = str_replace('&nbsp;','',$v3);
             }
-        } else {
-            return '';
+
+            $card = $memberdata[11]; //卡号
+            $card = explode(')', $card);
+            foreach ($card as &$v4) {
+                $v4 = strip_tags($v4);
+                $v4 = preg_replace("/\s\n\t/","",$v4);
+                $v4 = str_replace(' ', '', $v4);
+                $v4 = trim(str_replace(PHP_EOL, '', $v4));
+                $v4 = str_replace('&nbsp;','',$v4);
+                $v4 = str_replace('(','',$v4);
+            }
+
+            //套餐卡信息
+            $card_list = $item['card_list'];
+            $card_list = explode('<tr>', $card_list);
+            if(isset($card_list[0])){
+                unset($card_list[0]);
+            }
+            if(isset($card_list[1])){
+                unset($card_list[1]);
+            }
+            foreach ($card_list as &$v5) {
+                $v5 = explode('<td>', $v5);
+                foreach ($v5 as &$vv5) {
+                    $vv5 = strip_tags($vv5);
+                    $vv5 = preg_replace("/\s\n\t/","",$vv5);
+                    $vv5 = str_replace(' ', '', $vv5);
+                    $vv5 = trim(str_replace(PHP_EOL, '', $vv5));
+                    $vv5 = str_replace('&nbsp;','',$vv5);
+                    $vv5 = str_replace('(','',$vv5);
+                }
+            }
+
+            foreach ($card_list as $k6 => &$v6) {
+                $newA[0] = $memberdata[4]; //手机号
+                $newA[1] = "\t".$card[0]; //卡号
+                $newA[2] = $memberdata[2]; //姓名
+                $newA[3] = $card[1]; //卡名称
+                $newA[4] = $card[1]; //卡类型
+
+                $newA[5] = $v6[1];//项目编号
+                $newA[6] = $v6[1];//项目名称
+                $newA[7] = $v6[4];//总次数
+                $newA[8] = $v6[3];//剩余次数
+                $newA[9] = ceil($v6[5]/$v6[4]); //单次消费金额
+                $newA[10] = $v6[3]*ceil($v6[5]/$v6[4]); //剩余金额
+                $newA[11] = $v6[7];//失效日期
+
+                $newA[12] = $v6[3];//总剩余次数
+                $newA[13] = $newA[10]; //总剩余金额
+                $newA[14] = $other[8];
+                $newdata[] = $newA;
+            }
         }
-        return $tables[1][0];
+        return $newdata;
     }
 
     /**
@@ -393,64 +451,7 @@ class curlapi{
      * @param $html
      * @param $shopname
      */
-    public function downPackageCvs($html,$shopname){
-        $rules = array(
-            //采集tr中的纯文本内容
-            'other' => array('tr','html'),
-        );
-        $newdata = array();
-        $data = QueryList::Query($html, $rules)->data;
-        foreach ($data as $k=>&$item) {
-            $other = explode('</td>', $item['other']);
-            if(count($other) > 8) {
-                //unset($other[0]);//去掉第一空白项
-                $item['other'] = $other;
-                foreach ($other as $k1 => &$v1) {
-                    $v1 = strip_tags($v1);;
-                    $v1 = preg_replace("/\s\n\t/","",$v1);
-                    $v1 = str_replace(' ', '', $v1);
-                    $v1= trim(str_replace(PHP_EOL, '', $v1));
-                    if($k1 == 5) {
-                        $v1 = trim(str_replace(',', '，', $v1));
-                        $v1 = explode('项目编号:', $v1);
-                        unset($v1[0]);
-                    }
-                }
-
-                foreach($other[5] as $k2=>$v2) {
-                    $newA[0] = $other[0]; //手机号
-                    $newA[1] = "\t".$other[1]; //卡号
-                    $newA[2] = $other[2]; //姓名
-                    $newA[3] = $other[3]; //卡名称
-                    $newA[4] = $other[4]; //卡类型
-
-                    $v2 .= "#";
-                    //获取项目套餐信息
-                    preg_match('/(.*)，项目名称/isU', $v2, $p1);  //项目编号
-                    preg_match('/项目名称:(.*)，/isU', $v2, $p2);  //项目名称
-                    preg_match('/总次数:(.*)，/isU', $v2, $p3);  //总次数
-                    preg_match('/剩余次数:(.*)，/isU', $v2, $p4);  //剩余次数
-                    preg_match('/单次消费金额:(.*)，/isU', $v2, $p5);  //单次消费金额
-                    preg_match('/剩余金额:(.*)#/isU', $v2, $p6);  //剩余金额
-                    if(!isset($p6[1])) {
-                        preg_match('/剩余金额:(.*)，/isU', $v2, $p6);  //剩余金额
-                    }
-                    preg_match('/失效日期：(.*)#/isU', $v2, $p7);  //失效日期
-                    $newA[5] = isset($p1[1])?$p1[1]:' ';//项目编号
-                    $newA[6] = isset($p2[1])?$p2[1]:' ';//项目名称
-                    $newA[7] = isset($p3[1])?$p3[1]:' ';//总次数
-                    $newA[8] = isset($p4[1])?$p4[1]:' ';//剩余次数
-                    $newA[9] = isset($p5[1])?$p5[1]:' '; //单次消费金额
-                    $newA[10] = isset($p6[1])?$p6[1]:' '; //剩余金额
-                    $newA[11] = isset($p7[1])?$p7[1]:' ';//失效日期
-
-                    $newA[12] = $newA[8];//总剩余次数
-                    $newA[13] = $newA[10]; //总剩余金额
-                    $newA[14] = $other[8];
-                    $newdata[] = $newA;
-                }
-            }
-        }
+    public function downPackageCvs($newdata,$shopname){
         //导出CVS
         $cvsstr = "手机号,卡号,姓名,卡名称,卡类型,项目编号,项目名称,总次数,剩余次数,单次消费金额,剩余金额,失效日期,总剩余次数,总剩余金额\n";
         $filename = $shopname.'_会员套餐信息.csv';
