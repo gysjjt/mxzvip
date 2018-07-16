@@ -177,12 +177,14 @@ class curlapi{
     public function getDownMembers($html){
         $rules = array(
             'memberdata' => array('.media-member','html','-.card_list'),
+            'mediamember' => array('.media-member','data-id'),
         );
 
         $newdata = array();
         $data = QueryList::Query($html, $rules)->data;
         foreach ($data as $k => &$item) {
             $memberdata = $item['memberdata'];
+            $dataid = $item['mediamember'];
             $memberdata = explode('td>', $memberdata);
             foreach ($memberdata as &$v3) {
                 $v3 = strip_tags($v3);
@@ -191,7 +193,6 @@ class curlapi{
                 $v3 = trim(str_replace(PHP_EOL, '', $v3));
                 $v3 = str_replace('&nbsp;','',$v3);
             }
-
 
             // $memberdata[8] = str_replace('当前积分：', '', $memberdata[8]);
             // $memberdata[10] = str_replace('最后消费：', '', $memberdata[23]);
@@ -234,6 +235,21 @@ class curlapi{
             $newdata[$k][8] = $memberdata[10]; //消费次数
             $newdata[$k][11] = $memberdata[8]; //积分
             $newdata[$k][13] = ''; //开卡时间
+
+            //获取开卡日期
+            $this->url = "http://mry.meiruyi.vip/member/archive/A1122ADF920D757568C2150BDC970533/".$dataid;
+            $pagesData = $this -> getMembersPage();
+            preg_match("/注册日期：(.*)</isU", $pagesData, $opencard);
+            if(isset($opencard[1])){
+                $opendate = preg_replace("/\s\n\t/","",$opencard[1]);
+                $opendate = str_replace(' ', '', $opendate);
+                $opendate = trim(str_replace(PHP_EOL, '', $opendate));
+                $opendate = str_replace('&nbsp;','',$opendate);
+                $opendate = str_replace('(','',$opendate);
+                if($opendate != ''){
+                    $newdata[$k][13] = $opendate;
+                }
+            }
 
             $newdata[$k][14] = $memberdata[23]; //最后消费时间
             $newdata[$k][15] = ''; //生日
@@ -326,19 +342,17 @@ class curlapi{
         $cvsstr = "卡号(必填[唯一]),姓名(必填),手机号(必填[唯一]),性别(必填[“0”代表男，“1”代表女]),卡类型(必填[系统编号]),折扣(必填),卡金余额(必填),充值总额,消费次数,消费总额,赠送金,积分,欠款,开卡时间(格式：YYYY-mm-dd),最后消费时间(格式：YYYY-mm-dd),生日(格式：YYYY-mm-dd),会员备注\n";
         $filename = $shopname.'_会员信息.csv';
         $cvsstr = iconv('utf-8','gb2312//ignore',$cvsstr);
-
         foreach($newdata as &$v){
             foreach($v as $k=>&$v1){
                 //转码
                 $cvsdata = iconv('utf-8','gb2312//ignore',$v1);
                 $cvsstr .= $cvsdata; //用引文逗号分开
-                if($k < 19) {
+                if($k < 17) {
                     $cvsstr .= ","; //用引文逗号分开
                 }
             }
             $cvsstr .= "\n";
         }
-
         header("Content-type:text/csv");
         header("Content-Disposition:attachment;filename=".$filename);
         header('Cache-Control:must-revalidate,post-check=0,pre-check=0');
@@ -373,8 +387,9 @@ class curlapi{
     public function getPackageInfo($html){
         $rules = array(
             'memberdata' => array('.media-member','html','-.card_list'),
-            'card_list' => array('.card_list>table','html'),
+            'card_list' => array('.media-member','html'),
         );
+
 
         $newdata = array();
         $data = QueryList::Query($html, $rules)->data;
@@ -403,44 +418,51 @@ class curlapi{
 
             //套餐卡信息
             $card_list = $item['card_list'];
-            $card_list = explode('<tr>', $card_list);
-            if(isset($card_list[0])){
-                unset($card_list[0]);
-            }
-            if(isset($card_list[1])){
-                unset($card_list[1]);
-            }
-            foreach ($card_list as &$v5) {
-                $v5 = explode('<td>', $v5);
-                foreach ($v5 as &$vv5) {
-                    $vv5 = strip_tags($vv5);
-                    $vv5 = preg_replace("/\s\n\t/","",$vv5);
-                    $vv5 = str_replace(' ', '', $vv5);
-                    $vv5 = trim(str_replace(PHP_EOL, '', $vv5));
-                    $vv5 = str_replace('&nbsp;','',$vv5);
-                    $vv5 = str_replace('(','',$vv5);
+
+            $rules = array(
+                'card_list' => array('.card_list>table','html'),
+            );
+            $data1 = QueryList::Query($card_list, $rules)->data;
+
+            if(!empty($data1)){
+                $card_list = explode('<tr>', $data1[0]['card_list']);
+                if(isset($card_list[0])){
+                    unset($card_list[0]);
                 }
-            }
+                if(isset($card_list[1])){
+                    unset($card_list[1]);
+                }
+                foreach ($card_list as &$v5) {
+                    $v5 = explode('<td>', $v5);
+                    foreach ($v5 as &$vv5) {
+                        $vv5 = strip_tags($vv5);
+                        $vv5 = preg_replace("/\s\n\t/","",$vv5);
+                        $vv5 = str_replace(' ', '', $vv5);
+                        $vv5 = trim(str_replace(PHP_EOL, '', $vv5));
+                        $vv5 = str_replace('&nbsp;','',$vv5);
+                        $vv5 = str_replace('(','',$vv5);
+                    }
+                }
+                foreach ($card_list as $k6 => &$v6) {
+                    $newA[0] = $memberdata[4]; //手机号
+                    $newA[1] = "\t".$card[0]; //卡号
+                    $newA[2] = $memberdata[2]; //姓名
+                    $newA[3] = $card[1]; //卡名称
+                    $newA[4] = $card[1]; //卡类型
 
-            foreach ($card_list as $k6 => &$v6) {
-                $newA[0] = $memberdata[4]; //手机号
-                $newA[1] = "\t".$card[0]; //卡号
-                $newA[2] = $memberdata[2]; //姓名
-                $newA[3] = $card[1]; //卡名称
-                $newA[4] = $card[1]; //卡类型
+                    $newA[5] = $v6[1];//项目编号
+                    $newA[6] = $v6[1];//项目名称
+                    $newA[7] = $v6[4];//总次数
+                    $newA[8] = $v6[3];//剩余次数
+                    $newA[9] = ceil($v6[5]/$v6[4]); //单次消费金额
+                    $newA[10] = $v6[5]; //剩余金额
+                    $newA[11] = $v6[7];//失效日期
 
-                $newA[5] = $v6[1];//项目编号
-                $newA[6] = $v6[1];//项目名称
-                $newA[7] = $v6[4];//总次数
-                $newA[8] = $v6[3];//剩余次数
-                $newA[9] = ceil($v6[5]/$v6[4]); //单次消费金额
-                $newA[10] = $v6[3]*ceil($v6[5]/$v6[4]); //剩余金额
-                $newA[11] = $v6[7];//失效日期
-
-                $newA[12] = $v6[3];//总剩余次数
-                $newA[13] = $newA[10]; //总剩余金额
-                $newA[14] = $other[8];
-                $newdata[] = $newA;
+                    $newA[12] = $v6[3];//总剩余次数
+                    $newA[13] = $newA[10]; //总剩余金额
+                    $newA[14] = $other[8];
+                    $newdata[] = $newA;
+                }
             }
         }
         return $newdata;
