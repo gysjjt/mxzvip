@@ -26,10 +26,10 @@ if($_GET['action'] == "code"){//获取验证码
         echo "账号密码或者验证码错误";
     }
 }else if($_GET['action'] == 'curlmember'){
-    $shopname = "妍理碧桂花城店";
+    $shopname = "jl01";
     $data = '';
 
-    $_SESSION['cookies'] = 'JSESSIONID=51C0B2E9F1C81C7C7CB1FF3E6C3BFC52; Hm_lvt_4e5bdf78b2b9fcb88736fc67709f2806=1529464385,1531386540,1531473683,1531720887; Hm_lpvt_4e5bdf78b2b9fcb88736fc67709f2806=1531721052; Hm_lvt_cc903faaed69cca18f7cf0997b2e62c9=1531473720,1531720909; Hm_lpvt_cc903faaed69cca18f7cf0997b2e62c9=1531721052';
+    $_SESSION['cookies'] = 'Hm_lvt_cc903faaed69cca18f7cf0997b2e62c9=1531473720,1531720909; JSESSIONID=EC310A01EF7B052ECE3DA5EF11B6D91B; Hm_lvt_4e5bdf78b2b9fcb88736fc67709f2806=1531386540,1531473683,1531720887,1533373319; Hm_lpvt_4e5bdf78b2b9fcb88736fc67709f2806=1533373437';
     //获取总数
     $curl -> url = "http://mry.meiruyi.vip/member/index";
 
@@ -47,7 +47,7 @@ if($_GET['action'] == "code"){//获取验证码
     //$pages = 3;
     $newData = array();
     for($i=1; $i<=$pages; $i++){
-        $params = "currNum=$i&rpp=20&sortFlag=1&shopid=A1122ADF920D757568C2150BDC970533&bigcata=0&isHighLevel=0&birthtype=0";
+        $params = "currNum=$i&rpp=20&sortFlag=1&shopid=7A025B10173385C21D9D09D00BBC32C8&bigcata=0&isHighLevel=0&birthtype=0";
         //$params .= "&allprefeeMin=1";
         $curl -> params = $params;
         $curl -> url = "http://mry.meiruyi.vip/member/index";
@@ -63,10 +63,10 @@ if($_GET['action'] == "code"){//获取验证码
     }
     $curl -> downMembersCvs($newData, $shopname);
 }else if($_GET['action'] == 'curlpackage'){
-    $shopname = "妍理碧桂花城店";
+    $shopname = "jl01";
     $data = '';
 
-    $_SESSION['cookies'] = 'JSESSIONID=51C0B2E9F1C81C7C7CB1FF3E6C3BFC52; Hm_lvt_4e5bdf78b2b9fcb88736fc67709f2806=1529464385,1531386540,1531473683,1531720887; Hm_lpvt_4e5bdf78b2b9fcb88736fc67709f2806=1531721052; Hm_lvt_cc903faaed69cca18f7cf0997b2e62c9=1531473720,1531720909; Hm_lpvt_cc903faaed69cca18f7cf0997b2e62c9=1531721052';
+    $_SESSION['cookies'] = 'Hm_lvt_cc903faaed69cca18f7cf0997b2e62c9=1531473720,1531720909; JSESSIONID=EC310A01EF7B052ECE3DA5EF11B6D91B; Hm_lvt_4e5bdf78b2b9fcb88736fc67709f2806=1531386540,1531473683,1531720887,1533373319; Hm_lpvt_4e5bdf78b2b9fcb88736fc67709f2806=1533373437';
     //获取总数
     $curl -> url = "http://mry.meiruyi.vip/member/index";
     $rs = $curl -> getMembersPage();
@@ -81,7 +81,7 @@ if($_GET['action'] == "code"){//获取验证码
 
     $newData = array();
     for($i=1; $i<=$pages; $i++){
-        $params = "currNum=$i&rpp=20&sortFlag=1&shopid=A1122ADF920D757568C2150BDC970533&bigcata=0&isHighLevel=0&birthtype=0";
+        $params = "currNum=$i&rpp=20&sortFlag=1&shopid=7A025B10173385C21D9D09D00BBC32C8&bigcata=0&isHighLevel=0&birthtype=0";
         //$params .= "&allprefeeMin=1";
         $curl -> params = $params;
         $curl -> url = "http://mry.meiruyi.vip/member/index";
