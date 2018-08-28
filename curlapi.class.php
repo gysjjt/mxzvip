@@ -390,7 +390,6 @@ class curlapi{
             'card_list' => array('.media-member','html'),
         );
 
-
         $newdata = array();
         $data = QueryList::Query($html, $rules)->data;
         foreach ($data as $k => &$item) {

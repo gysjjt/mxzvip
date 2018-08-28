@@ -29,7 +29,7 @@ if($_GET['action'] == "code"){//获取验证码
     $shopname = "jl01";
     $data = '';
 
-    $_SESSION['cookies'] = 'Hm_lvt_cc903faaed69cca18f7cf0997b2e62c9=1531473720,1531720909; JSESSIONID=EC310A01EF7B052ECE3DA5EF11B6D91B; Hm_lvt_4e5bdf78b2b9fcb88736fc67709f2806=1531386540,1531473683,1531720887,1533373319; Hm_lpvt_4e5bdf78b2b9fcb88736fc67709f2806=1533373437';
+    $_SESSION['cookies'] = 'Hm_lvt_cc903faaed69cca18f7cf0997b2e62c9=1531473720,1531720909; username=jl01; JSESSIONID=0532BCDDEFBAF34E85ECC0357DBACFA7; Hm_lvt_4e5bdf78b2b9fcb88736fc67709f2806=1531720887,1533373319,1534153705,1534301710; Hm_lpvt_4e5bdf78b2b9fcb88736fc67709f2806=1534301723';
     //获取总数
     $curl -> url = "http://mry.meiruyi.vip/member/index";
 
@@ -47,7 +47,7 @@ if($_GET['action'] == "code"){//获取验证码
     //$pages = 3;
     $newData = array();
     for($i=1; $i<=$pages; $i++){
-        $params = "currNum=$i&rpp=20&sortFlag=1&shopid=7A025B10173385C21D9D09D00BBC32C8&bigcata=0&isHighLevel=0&birthtype=0";
+        $params = "currNum=$i&rpp=20&sortFlag=1&shopid=93BE36DF9606CDADC93294A66065DB18&bigcata=0&isHighLevel=0&birthtype=0";
         //$params .= "&allprefeeMin=1";
         $curl -> params = $params;
         $curl -> url = "http://mry.meiruyi.vip/member/index";
@@ -66,7 +66,7 @@ if($_GET['action'] == "code"){//获取验证码
     $shopname = "jl01";
     $data = '';
 
-    $_SESSION['cookies'] = 'Hm_lvt_cc903faaed69cca18f7cf0997b2e62c9=1531473720,1531720909; JSESSIONID=EC310A01EF7B052ECE3DA5EF11B6D91B; Hm_lvt_4e5bdf78b2b9fcb88736fc67709f2806=1531386540,1531473683,1531720887,1533373319; Hm_lpvt_4e5bdf78b2b9fcb88736fc67709f2806=1533373437';
+    $_SESSION['cookies'] = 'Hm_lvt_cc903faaed69cca18f7cf0997b2e62c9=1531473720,1531720909; username=jl01; JSESSIONID=50EA4728F6D3B3F12C05CD5715198996; Hm_lvt_4e5bdf78b2b9fcb88736fc67709f2806=1533373319,1534153705,1534301710; Hm_lpvt_4e5bdf78b2b9fcb88736fc67709f2806=1534326522';
     //获取总数
     $curl -> url = "http://mry.meiruyi.vip/member/index";
     $rs = $curl -> getMembersPage();
@@ -81,8 +81,8 @@ if($_GET['action'] == "code"){//获取验证码
 
     $newData = array();
     for($i=1; $i<=$pages; $i++){
-        $params = "currNum=$i&rpp=20&sortFlag=1&shopid=7A025B10173385C21D9D09D00BBC32C8&bigcata=0&isHighLevel=0&birthtype=0";
-        //$params .= "&allprefeeMin=1";
+        $params = "currNum=$i&rpp=20&sortFlag=1&shopid=93BE36DF9606CDADC93294A66065DB18&bigcata=0&isHighLevel=0&birthtype=0";
+        //$params .= "&keyword=13113727089";
         $curl -> params = $params;
         $curl -> url = "http://mry.meiruyi.vip/member/index";
         $pagesData = $curl -> getMembersPage();
