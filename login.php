@@ -29,11 +29,11 @@ if($_GET['action'] == "code"){//获取验证码
     $shopname = "88cpd";
     $data = '';
 
-    $_SESSION['cookies'] = 'acw_tc=7819730815463144228196639ef0fe7f369b01ef1c6b666b5bfb07e6f7121d; JSESSIONID=524F6F4A82A3DD0EEE205B5B041F4C40; username=88cpd';
+    $_SESSION['cookies'] = 'acw_tc=7819730815463144228196639ef0fe7f369b01ef1c6b666b5bfb07e6f7121d; username=88cpd; JSESSIONID=8F1E2E7F152A7C50504DE9EDEB988A09';
     //获取总数
     $curl -> url = "https://mry.meiruyi.vip/member/index";
 
-    $params = "shopid=827C22F8EC7144A9359F8F8E301E14AE&sortFlag=0&isHighLevel=0&keyword=&bigcata=0&typeno=&catano=&sex=&opener=&introer=&birthdayStart=&birthdayEnd=&birthtype=0&regdayStart=&regdayEnd=&lastconsumeStart=&lastconsumeEnd=&lastvalidStart=&lastvalidEnd=&totalrecMin=&totalrecMax=&totalconsumeMin=&totalconsumeMax=&totaltimesMin=&totaltimesMax=&curroweMin=&curroweMax=&allcardfeeMin=&allcardfeeMax=&allprefeeMin=&allprefeeMax=&currpointMin=&currpointMax=&lastconsumedayMin=&lastconsumedayMax=&itemno=&currtimesMin=&currtimesMax=";
+    $params = "currNum=1&rpp=20&birthdayStart=&totaltimesMin=&curroweMax=&allcardfeeMax=&currpointMax=&totalrecMax=&birthtype=0&allprefeeMin=&totalrecMin=&currtimesMax=&regdayEnd=&curroweMin=&lastvalidStart=&totalconsumeMax=&keyword=&lastconsumedayMin=&bigcata=0&introer=&isHighLevel=0&sex=&itemno=&sortFlag=1&totalconsumeMin=&lastconsumedayMax=&lastconsumeEnd=&catano=&typeno=&opener=&regdayStart=&lastconsumeStart=&allcardfeeMin=&totaltimesMax=&birthdayEnd=&lastvalidEnd=&shopid=827C22F8EC7144A9359F8F8E301E14AE&currpointMin=&currtimesMin=&allprefeeMax=";
     // $curl -> params = $params;
 
     $rs = $curl -> getMembersPage();
@@ -47,7 +47,7 @@ if($_GET['action'] == "code"){//获取验证码
     //$pages = 3;
     $newData = array();
     for($i=1; $i<=$pages; $i++){
-        $params = "currNum=$i&rpp=20&sortFlag=1&shopid=827C22F8EC7144A9359F8F8E301E14AE&bigcata=0&isHighLevel=0&birthtype=0";
+        $params = "currNum=$i&rpp=20&birthdayStart=&totaltimesMin=&curroweMax=&allcardfeeMax=&currpointMax=&totalrecMax=&birthtype=0&allprefeeMin=&totalrecMin=&currtimesMax=&regdayEnd=&curroweMin=&lastvalidStart=&totalconsumeMax=&keyword=&lastconsumedayMin=&bigcata=0&introer=&isHighLevel=0&sex=&itemno=&sortFlag=1&totalconsumeMin=&lastconsumedayMax=&lastconsumeEnd=&catano=&typeno=&opener=&regdayStart=&lastconsumeStart=&allcardfeeMin=&totaltimesMax=&birthdayEnd=&lastvalidEnd=&shopid=827C22F8EC7144A9359F8F8E301E14AE&currpointMin=&currtimesMin=&allprefeeMax=";
         //$params .= "&allprefeeMin=1";
         $curl -> params = $params;
         $curl -> url = "https://mry.meiruyi.vip/member/index";
@@ -63,12 +63,16 @@ if($_GET['action'] == "code"){//获取验证码
     }
     $curl -> downMembersCvs($newData, $shopname);
 }else if($_GET['action'] == 'curlpackage'){
-    $shopname = "jl01";
+    $shopname = "88cpd";
     $data = '';
 
     $_SESSION['cookies'] = 'acw_tc=7819730815463144228196639ef0fe7f369b01ef1c6b666b5bfb07e6f7121d; JSESSIONID=524F6F4A82A3DD0EEE205B5B041F4C40; username=88cpd';
     //获取总数
     $curl -> url = "https://mry.meiruyi.vip/member/index";
+
+    $params = "currNum=1&rpp=20&birthdayStart=&totaltimesMin=&curroweMax=&allcardfeeMax=&currpointMax=&totalrecMax=&birthtype=0&allprefeeMin=&totalrecMin=&currtimesMax=&regdayEnd=&curroweMin=&lastvalidStart=&totalconsumeMax=&keyword=&lastconsumedayMin=&bigcata=0&introer=&isHighLevel=0&sex=&itemno=&sortFlag=1&totalconsumeMin=&lastconsumedayMax=&lastconsumeEnd=&catano=&typeno=&opener=&regdayStart=&lastconsumeStart=&allcardfeeMin=&totaltimesMax=&birthdayEnd=&lastvalidEnd=&shopid=827C22F8EC7144A9359F8F8E301E14AE&currpointMin=&currtimesMin=&allprefeeMax=";
+    // $curl -> params = $params;
+
     $rs = $curl -> getMembersPage();
     preg_match('/共(.*)条/isU', $rs, $totals);
     $totals = isset($totals[1])?$totals[1]:100;
@@ -81,7 +85,7 @@ if($_GET['action'] == "code"){//获取验证码
 
     $newData = array();
     for($i=1; $i<=$pages; $i++){
-        $params = "currNum=$i&rpp=20&sortFlag=1&shopid=827C22F8EC7144A9359F8F8E301E14AE&bigcata=0&isHighLevel=0&birthtype=0";
+        $params = "currNum=$i&rpp=20&birthdayStart=&totaltimesMin=&curroweMax=&allcardfeeMax=&currpointMax=&totalrecMax=&birthtype=0&allprefeeMin=&totalrecMin=&currtimesMax=&regdayEnd=&curroweMin=&lastvalidStart=&totalconsumeMax=&keyword=&lastconsumedayMin=&bigcata=0&introer=&isHighLevel=0&sex=&itemno=&sortFlag=1&totalconsumeMin=&lastconsumedayMax=&lastconsumeEnd=&catano=&typeno=&opener=&regdayStart=&lastconsumeStart=&allcardfeeMin=&totaltimesMax=&birthdayEnd=&lastvalidEnd=&shopid=827C22F8EC7144A9359F8F8E301E14AE&currpointMin=&currtimesMin=&allprefeeMax=";
         //$params .= "&keyword=13113727089";
         $curl -> params = $params;
         $curl -> url = "https://mry.meiruyi.vip/member/index";

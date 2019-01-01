@@ -193,6 +193,7 @@ class curlapi{
             $memberdata = $item['memberdata'];
             $dataid = $item['mediamember'];
             $memberdata = explode('td>', $memberdata);
+
             foreach ($memberdata as &$v3) {
                 $v3 = strip_tags($v3);
                 $v3 = preg_replace("/\s\n\t/","",$v3);
@@ -200,7 +201,6 @@ class curlapi{
                 $v3 = trim(str_replace(PHP_EOL, '', $v3));
                 $v3 = str_replace('&nbsp;','',$v3);
             }
-
             // $memberdata[8] = str_replace('当前积分：', '', $memberdata[8]);
             // $memberdata[10] = str_replace('最后消费：', '', $memberdata[23]);
             // $memberdata[14] = str_replace('充值总额￥', '', $memberdata[19]);
@@ -210,7 +210,6 @@ class curlapi{
             // //$memberdata2[1] = str_replace(array('[',']','1'), array('','',''), $memberdata2[1]);
             // $memberdata[5] = str_replace('卡金￥', '', $memberdata[13]);
             // $memberdata[7] = str_replace('赠金￥', '', $memberdata[14]);
-
 
             $card = $memberdata[11]; //卡号
             $card = explode(')', $card);
@@ -244,7 +243,7 @@ class curlapi{
             $newdata[$k][13] = ''; //开卡时间
 
             //获取开卡日期
-            $this->url = "http://mry.meiruyi.vip/member/archive/A1122ADF920D757568C2150BDC970533/".$dataid;
+            $this->url = "http://mry.meiruyi.vip/member/archive/827C22F8EC7144A9359F8F8E301E14AE/".$dataid;
             $pagesData = $this -> getMembersPage();
             preg_match("/注册日期：(.*)</isU", $pagesData, $opencard);
             if(isset($opencard[1])){
@@ -399,6 +398,7 @@ class curlapi{
 
         $newdata = array();
         $data = QueryList::Query($html, $rules)->data;
+
         foreach ($data as $k => &$item) {
             //会员信息
             $memberdata = $item['memberdata'];
@@ -421,21 +421,18 @@ class curlapi{
                 $v4 = str_replace('&nbsp;','',$v4);
                 $v4 = str_replace('(','',$v4);
             }
-
             //套餐卡信息
             $card_list = $item['card_list'];
-
             $rules = array(
-                'card_list' => array('.card_list>table','html'),
+                'card_list' => array('.text-center>table','html'),
             );
             $data1 = QueryList::Query($card_list, $rules)->data;
-
             if(!empty($data1)){
                 $card_list = explode('<tr>', $data1[0]['card_list']);
-                if(isset($card_list[0])){
+                if(empty($card_list[0])){
                     unset($card_list[0]);
                 }
-                if(isset($card_list[1])){
+                if(empty($card_list[1])){
                     unset($card_list[1]);
                 }
                 foreach ($card_list as &$v5) {
